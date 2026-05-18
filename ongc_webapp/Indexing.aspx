@@ -104,9 +104,9 @@
     </div>
 
     <script type="text/javascript">
-        function resetIndexingForm() {
-            // Reset File Upload
-            var fileUpload = document.getElementById('<%= FileUpload1.ClientID %>');
+function resetIndexingForm() {
+    // Reset File Upload
+    var fileUpload = document.getElementById('<%= FileUpload1.ClientID %>');
             if (fileUpload) { fileUpload.value = ""; }
             
             // Reset Dropdowns to first item
@@ -124,5 +124,5 @@
     var statusLabel = document.getElementById('<%= lblStatus.ClientID %>');
     if (statusLabel) { statusLabel.innerHTML = ""; }
 }
-</script>
+    </script>
 </asp:Content>
