@@ -1,12 +1,11 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ongc_webapp.SiteMaster" %>
 
 <!DOCTYPE html>
-
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - My ASP.NET Application</title>
+    <title><%: Page.Title %> - ONGC Enterprise Portal</title>
 
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
@@ -15,13 +14,36 @@
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        
+        /* Official ONGC Navbar Styling */
+        .navbar-ongc { 
+            background-color: #8B0000 !important; 
+            border-bottom: 3px solid #ffc107; 
+            padding: 0.8rem 1rem;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-right: 10px;
+        }
+
+        .nav-link:hover {
+            color: #ffc107 !important; /* Yellow hover to match branding */
+            transform: translateY(-1px);
+        }
+
+        .footer { color: #6c757d; font-size: 0.9rem; padding: 20px 0; }
+    </style>
 </head>
 <body>
     <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
-                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
-                <%--Framework Scripts--%>
                 <asp:ScriptReference Name="MsAjaxBundle" />
                 <asp:ScriptReference Name="jquery" />
                 <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
@@ -33,32 +55,45 @@
                 <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
                 <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
                 <asp:ScriptReference Name="WebFormsBundle" />
-                <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark navbar-ongc shadow-sm">
             <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Application name</a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold d-flex align-items-center" runat="server" href="~/Dashboard">
+                    <img src="ongclogo.png" alt="Logo" style="height:35px; margin-right:12px;" />
+                    <span>ONGC PORTAL</span>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">About</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contact</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" runat="server" href="~/Dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" runat="server" href="~/Indexing">Indexing Tools</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" runat="server" href="#">Reports</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <asp:LinkButton ID="lnkLogout" runat="server" CssClass="nav-link fw-bold" OnClick="lnkLogout_Click" CausesValidation="false">Logout</asp:LinkButton>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <div class="container body-content">
+
+        <div class="container body-content" style="min-height: 80vh;">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - My ASP.NET Application</p>
+            <footer class="footer text-center">
+                <p>&copy; <%: DateTime.Now.Year %> - Oil and Natural Gas Corporation Limited (ONGC)</p>
             </footer>
         </div>
     </form>
