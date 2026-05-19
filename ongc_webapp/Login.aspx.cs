@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Configuration;
+using Npgsql;
 
 namespace ongc_webapp
 {
@@ -11,40 +13,44 @@ namespace ongc_webapp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Optional: If a user is already logged in, redirect them to the Dashboard automatically
-            if (!IsPostBack)
-            {
-                if (Session["UserID"] != null)
-                {
-                    Response.Redirect("Dashboard.aspx");
-                }
-            }
+
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            // 1. Capture the data from the textboxes and remove extra spaces
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            // 2. Validation Logic
-            // In a real-world scenario, you would query your SQL Database here.
-            // For your internship project demo, we use these hardcoded credentials:
-            if (username == "admin" && password == "ongc123")
-            {
-                // 3. Establish a Session
-                // This marks the user as 'Authorized' so they can access protected pages
-                Session["UserID"] = username;
-                Session["LoginTime"] = DateTime.Now.ToString();
+            string connString =
+                ConfigurationManager.ConnectionStrings["PostgresConnection"].ConnectionString;
 
-                // 4. Redirect to Dashboard
-                Response.Redirect("Dashboard.aspx");
-            }
-            else
+            using (NpgsqlConnection conn = new NpgsqlConnection(connString))
             {
-                // 5. Failed login - Show a professional alert message
-                string script = "alert('Access Denied: Invalid Credentials. Please check your Employee ID and Password.');";
-                ClientScript.RegisterStartupScript(this.GetType(), "LoginError", script, true);
+                conn.Open();
+
+                string query =
+                    "SELECT COUNT(*) FROM users WHERE username=@username AND password=@password";
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    if (count > 0)
+                    {
+                        Session["username"] = username;
+
+                        Response.Write("login successful");
+
+                        Response.Redirect("~/Dashboard.aspx");
+                    }
+                    else
+                    {
+                        Response.Write("<script>alert('Invalid username or password');</script>");
+                    }
+                }
             }
         }
     }

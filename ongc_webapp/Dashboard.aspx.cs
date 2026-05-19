@@ -6,8 +6,7 @@ namespace ongc_webapp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if user is logged in
-            if (Session["UserID"] == null)
+            if (Session["username"] == null)
             {
                 Response.Redirect("Login.aspx");
             }
@@ -17,6 +16,7 @@ namespace ongc_webapp
         {
             Session.Clear();
             Session.Abandon();
+
             Response.Redirect("Login.aspx");
         }
     }
