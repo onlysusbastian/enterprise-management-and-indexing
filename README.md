@@ -24,5 +24,6 @@ CREATE TABLE documents (
 );
 
 4) Inside Web.config, check lines 9-11, if they match the credentials.
-5) Re-build the program from Build --> Rebuild Solution
-6) Run the solution.
+5) Go to : Tools → NuGet Package Manager → Package Manager Console : enter "Update-Package -reinstall" in the console
+6) Re-build the program from Build --> Rebuild Solution
+7) Run the solution.
