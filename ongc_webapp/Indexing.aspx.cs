@@ -2,6 +2,8 @@
 using System.IO;
 using System.Web.UI;
 using System.Linq;
+using System.Configuration;
+using Npgsql;
 
 namespace ongc_webapp
 {
@@ -10,7 +12,7 @@ namespace ongc_webapp
         protected void Page_Load(object sender, EventArgs e)
         {
             // Ensure only logged-in users can access the indexing engine
-            if (Session["UserID"] == null)
+            if (Session["username"] == null)
             {
                 Response.Redirect("Login.aspx");
             }
@@ -59,6 +61,49 @@ namespace ongc_webapp
 
                     // 6. Save the physical file to the server
                     FileUpload1.SaveAs(fullPath);
+                    string connString =
+                    ConfigurationManager.ConnectionStrings["PostgresConnection"].ConnectionString;
+
+                    using (NpgsqlConnection conn = new NpgsqlConnection(connString))
+                    {
+                        conn.Open();
+
+                        string query = @"
+                        INSERT INTO documents
+                        (
+                            index_id,
+                            original_filename,
+                            stored_filename,
+                            department,
+                            description,
+                            uploaded_by,
+                            file_path
+                        )
+                        VALUES
+                        (
+                            @index_id,
+                            @original_filename,
+                            @stored_filename,
+                            @department,
+                            @description,
+                            @uploaded_by,
+                            @file_path
+                        )";
+
+                        using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@index_id", indexID);
+                            cmd.Parameters.AddWithValue("@original_filename", fileName);
+                            cmd.Parameters.AddWithValue("@stored_filename", indexID + fileExtension);
+                            cmd.Parameters.AddWithValue("@department", dept);
+                            cmd.Parameters.AddWithValue("@description", txtDescription.Text.Trim());
+                            cmd.Parameters.AddWithValue("@uploaded_by", Session["username"].ToString());
+                            cmd.Parameters.AddWithValue("@file_path", fullPath);
+
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
 
                     // 7. Display Professional Success Message
                     lblStatus.Text = $@"
